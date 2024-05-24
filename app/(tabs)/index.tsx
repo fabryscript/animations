@@ -10,8 +10,8 @@ const animationsList = [
     href: "/(tabs)/rotation-carousel",
   },
   {
-    name: "Sliding Pages",
-    href: "/sliding-pages",
+    name: "Dynamic Search Bar",
+    href: "/dynamic-search-bar",
   },
 ];
 
