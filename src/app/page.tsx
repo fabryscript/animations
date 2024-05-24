@@ -5,13 +5,13 @@ const animations: HomeCardProps[] = [
     title: "Dynamic Search Bar",
     description: "Search bar animation in dynamic island style.",
     href: "/dsb",
-    imageUrl: "/dsc/cover.png",
+    imageUrl: "/dsb/cover.png",
   },
 ];
 
 export default function Home() {
   return (
-    <main className="mx-auto flex max-w-[1440px] flex-col gap-8 py-8">
+    <main className="mx-auto flex max-w-[1440px] flex-col gap-16 py-8">
       <div className="flex flex-col gap-1 text-center text-neutral-200">
         <h1 className="text-4xl font-bold">
           Collection of cool web animations
