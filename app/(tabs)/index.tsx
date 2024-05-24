@@ -7,7 +7,7 @@ import { Ionicons } from "@expo/vector-icons";
 const animationsList = [
   {
     name: "Rotation Carousel",
-    href: "/(tabs)/rotation-carousel",
+    href: "/rotation-carousel",
   },
   {
     name: "Dynamic Search Bar",
