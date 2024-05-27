@@ -2,16 +2,20 @@
 
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { handleSearch as _handleSearch } from "@/components/dsb/utils";
+import {
+  AppResult,
+  handleSearch as _handleSearch,
+} from "@/components/dsb/utils";
 import classNames from "classnames";
 
 export default function DSB() {
   const [input, setInput] = useState("");
   const [state, setState] = useState<"collapsed" | "expanded">("collapsed");
+  const [queryResult, setQueryResult] = useState<AppResult>();
 
   const handleSearch = () => {
     setState((p) => (p === "expanded" ? "collapsed" : "expanded"));
-    _handleSearch(input);
+    setQueryResult(_handleSearch(input));
   };
 
   useEffect(() => {
@@ -32,10 +36,10 @@ export default function DSB() {
           opacity: 1,
           width: "370px",
           borderRadius: 32,
-          height: state === "expanded" ? "300px" : "52px",
+          height: state === "expanded" ? "202px" : "52px",
         }}
         transition={{ type: "spring", duration: 1 }}
-        className="flex w-0 flex-col items-center justify-between gap-4 bg-neutral-100 px-6 py-3"
+        className="flex w-0 flex-col items-center justify-between gap-4 overflow-hidden bg-neutral-100 px-6 py-3"
       >
         <motion.div
           className={classNames(
@@ -66,8 +70,13 @@ export default function DSB() {
                   }
                 }}
               />
-              <motion.span className="text-sm text-neutral-300">
-                From Spotify
+              <motion.span
+                className={classNames(
+                  "text-sm text-neutral-300 opacity-0 transition-opacity",
+                  { "opacity-100": state === "expanded" },
+                )}
+              >
+                From {queryResult ? queryResult.name : "Unknown"}
               </motion.span>
             </div>
           </div>
@@ -85,7 +94,7 @@ export default function DSB() {
           </motion.button>
         </motion.div>
         {state === "expanded" && (
-          <motion.div className="h-[360px] w-full">...</motion.div>
+          <>{queryResult && queryResult.ui && queryResult.ui()}</>
         )}
       </motion.div>
     </div>
