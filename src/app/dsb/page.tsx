@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { handleSearch as _handleSearch } from "@/components/dsb/utils";
 import classNames from "classnames";
 
@@ -17,7 +17,6 @@ export default function DSB() {
   useEffect(() => {
     if (state === "expanded") {
       window.addEventListener("keydown", (e) => {
-        console.log("ddd");
         if (e.key === "Escape") setState("collapsed");
       });
     } else {
@@ -28,8 +27,13 @@ export default function DSB() {
   return (
     <div className="flex w-full items-center justify-center">
       <motion.div
-        initial={{ opacity: 0, width: "20px" }}
-        animate={{ opacity: 1, width: "370px", borderRadius: 32 }}
+        initial={{ opacity: 0, width: "20px", height: "52px" }}
+        animate={{
+          opacity: 1,
+          width: "370px",
+          borderRadius: 32,
+          height: state === "expanded" ? "300px" : "52px",
+        }}
         transition={{ type: "spring", duration: 1 }}
         className="flex w-0 flex-col items-center justify-between gap-4 bg-neutral-100 px-6 py-3"
       >
@@ -38,13 +42,19 @@ export default function DSB() {
             "flex w-full items-center justify-between gap-12",
           )}
         >
-          <AnimatePresence mode="wait">
-            {state === "collapsed" ? (
+          <div className="flex h-6 overflow-hidden">
+            <div
+              className={classNames(
+                "flex flex-col gap-1 transition-transform duration-200",
+                {
+                  "-translate-y-[26px]": state === "expanded",
+                  "translate-y-0": state === "collapsed",
+                },
+              )}
+            >
               <motion.input
-                layoutId="label"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
                 transition={{ delay: 0.4 }}
                 value={input}
                 onChange={(e) => setInput(e.target.value.trim())}
@@ -56,18 +66,11 @@ export default function DSB() {
                   }
                 }}
               />
-            ) : (
-              <motion.span
-                layoutId="label"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="text-sm text-neutral-300"
-              >
+              <motion.span className="text-sm text-neutral-300">
                 From Spotify
               </motion.span>
-            )}
-          </AnimatePresence>
+            </div>
+          </div>
           <motion.button
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
