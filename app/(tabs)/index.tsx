@@ -10,8 +10,8 @@ const animationsList = [
     href: "/rotation-carousel",
   },
   {
-    name: "Dynamic Search Bar",
-    href: "/dynamic-search-bar",
+    name: "Holo Sticker",
+    href: "/holo-sticker",
   },
 ];
 
@@ -33,7 +33,7 @@ export default function TabOneScreen() {
               paddingBottom: 12,
             }}
           >
-            <Link href={href} onPress={() => console.log("pressed!")}>
+            <Link href={href}>
               <Text
                 style={{
                   color: "#2297EA",

@@ -42,6 +42,13 @@ export default function TabLayout() {
           href: null,
         }}
       />
+      <Tabs.Screen
+        name="holo-sticker"
+        options={{
+          title: "Holo Sticker",
+          href: null,
+        }}
+      />
     </Tabs>
   );
 }
