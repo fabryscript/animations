@@ -1,9 +1,17 @@
-import Image from "next/image";
+"use client";
+
 import React from "react";
+import Image from "next/image";
+import { motion } from "framer-motion";
 
 export default function SpotifyUI() {
   return (
-    <div className="flex w-full flex-col gap-4">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3, ease: "easeIn" }}
+      className="flex w-full flex-col gap-4"
+    >
       <div className="flex items-center gap-4">
         <Image
           src={"/dsb/igor.jpg"}
@@ -20,6 +28,6 @@ export default function SpotifyUI() {
       <div className="relative h-1 w-full rounded-full bg-neutral-200">
         <div className="absolute left-0 h-1 w-2 rounded-full bg-neutral-950"></div>
       </div>
-    </div>
+    </motion.div>
   );
 }
