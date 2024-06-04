@@ -13,6 +13,10 @@ const animationsList = [
     name: "Holo Sticker",
     href: "/holo-sticker",
   },
+  {
+    name: "Sliding Pages",
+    href: "/sliding-pages",
+  },
 ];
 
 export default function TabOneScreen() {

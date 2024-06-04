@@ -49,6 +49,13 @@ export default function TabLayout() {
           href: null,
         }}
       />
+      <Tabs.Screen
+        name="sliding-pages"
+        options={{
+          title: "Sliding Pages",
+          href: null,
+        }}
+      />
     </Tabs>
   );
 }
