@@ -1,14 +1,8 @@
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import SettingsPage from "./components/SettingsPage";
-import Carousel from "react-native-reanimated-carousel";
-import { Dimensions, View } from "react-native";
-import FeedPage from "./components/FeedPage";
-import ProfilePage from "./components/ProfilePage";
-import ContextUpdater from "./components/ContextUpdater";
+import { View } from "react-native";
 import { CarouselValueProvider } from "./context/CarouselValueContext";
 import SlidingButton from "./components/SlidingButton";
-
-const { width, height } = Dimensions.get("window");
+import PageCarousel from "./components/PageCarousel";
 
 export default function SlidingPagesComponent() {
   return (
@@ -17,16 +11,8 @@ export default function SlidingPagesComponent() {
         <View
           style={{ flex: 1, backgroundColor: "black", position: "relative" }}
         >
-          <Carousel
-            data={[<SettingsPage />, <FeedPage />, <ProfilePage />]}
-            loop={false}
-            style={{ flex: 1 }}
-            width={width}
-            height={height}
-            renderItem={(props) => (
-              <ContextUpdater {...props}>{props.item}</ContextUpdater>
-            )}
-          />
+          <PageCarousel />
+          <SlidingButton />
         </View>
       </GestureHandlerRootView>
     </CarouselValueProvider>
