@@ -5,7 +5,6 @@ export default function FeedPage() {
     <View
       style={{
         flex: 1,
-        backgroundColor: "black",
         display: "flex",
         paddingVertical: 24,
         paddingHorizontal: 20,
