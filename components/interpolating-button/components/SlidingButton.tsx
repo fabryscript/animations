@@ -11,7 +11,7 @@ const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 const LABELS = ["Feed", "Back"];
 
-export default function SlidingButton() {
+export default function SlidingButtonPage() {
   return (
     <View
       style={{

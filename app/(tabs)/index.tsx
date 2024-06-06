@@ -14,8 +14,8 @@ const animationsList = [
     href: "/holo-sticker",
   },
   {
-    name: "Sliding Pages",
-    href: "/sliding-pages",
+    name: "Interpolating Button",
+    href: "/interpolating-button",
   },
 ];
 

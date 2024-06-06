@@ -50,9 +50,9 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="sliding-pages"
+        name="interpolating-button"
         options={{
-          title: "Sliding Pages",
+          title: "Interpolating Button",
           href: null,
         }}
       />
