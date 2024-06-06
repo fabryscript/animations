@@ -11,7 +11,9 @@ export default function DSB() {
   const [ref, { height }] = useMeasure();
 
   const handleSearch = () => {
-    setState((p) => (p === "expanded" ? "collapsed" : "expanded"));
+    if (input.trim().length > 0) {
+      setState((p) => (p === "expanded" ? "collapsed" : "expanded"));
+    }
   };
 
   useEffect(() => {
@@ -46,7 +48,7 @@ export default function DSB() {
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.15, ease: "easeOut" }}
                     value={input}
-                    onChange={(e) => setInput(e.target.value.trim())}
+                    onChange={(e) => setInput(e.target.value)}
                     placeholder="Can I get you something?"
                     className="w-full bg-neutral-100 placeholder:text-neutral-300 focus:outline-none"
                     onKeyDown={(e) => {
