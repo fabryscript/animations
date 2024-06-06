@@ -56,6 +56,13 @@ export default function TabLayout() {
           href: null,
         }}
       />
+      <Tabs.Screen
+        name="scrollable-tabs"
+        options={{
+          title: "Scrollable Tabs",
+          href: null,
+        }}
+      />
     </Tabs>
   );
 }

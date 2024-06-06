@@ -17,6 +17,10 @@ const animationsList = [
     name: "Interpolating Button",
     href: "/interpolating-button",
   },
+  {
+    name: "Scrollable Tabs",
+    href: "/scrollable-tabs",
+  },
 ];
 
 export default function TabOneScreen() {
