@@ -63,6 +63,13 @@ export default function TabLayout() {
           href: null,
         }}
       />
+      <Tabs.Screen
+        name="collapsable-wheel"
+        options={{
+          title: "Collapsable Wheel",
+          href: null,
+        }}
+      />
     </Tabs>
   );
 }

@@ -21,6 +21,10 @@ const animationsList = [
     name: "Scrollable Tabs",
     href: "/scrollable-tabs",
   },
+  {
+    name: "Collapsable Wheel",
+    href: "/collapsable-wheel",
+  },
 ];
 
 export default function TabOneScreen() {
