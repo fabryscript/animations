@@ -1,7 +1,66 @@
 import { MousePointer2 } from "lucide-react-native";
+import { useMemo } from "react";
 import { Pressable, Text, View } from "react-native";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import Animated, {
+  Easing,
+  interpolate,
+  interpolateColor,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withTiming,
+} from "react-native-reanimated";
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 export default function CollapsableWheelComponent() {
+  const pressed = useSharedValue(false);
+  const offset = useSharedValue(0);
+
+  const pan = useMemo(
+    () =>
+      Gesture.Pan()
+        .activateAfterLongPress(500)
+        .onBegin(() => {
+          pressed.value = !pressed.value;
+        })
+        .onChange((e) => {
+          offset.value = e.translationY;
+        })
+        .onFinalize(() => {
+          offset.value = withSpring(
+            pressed.value.valueOf() === false ? 0 : -120,
+            { mass: 0.2 }
+          );
+        }),
+    []
+  );
+
+  const cardStyle = useAnimatedStyle(() => ({
+    transform: [
+      {
+        translateY: offset.value,
+      },
+    ],
+  }));
+
+  const behindStyles = useAnimatedStyle(() => ({
+    backgroundColor: interpolateColor(
+      offset.value,
+      [0, -120],
+      ["white", "rgba(230, 230, 230, 1)"]
+    ),
+  }));
+
+  const opacity = useAnimatedStyle(() => ({
+    opacity: interpolate(offset.value, [0, -120], [1, 0]),
+  }));
+
+  const inverseOpacity = useAnimatedStyle(() => ({
+    opacity: interpolate(offset.value, [0, -120], [0, 1]),
+  }));
+
   return (
     <View
       style={{
@@ -13,26 +72,31 @@ export default function CollapsableWheelComponent() {
       }}
     >
       <Text style={{ fontSize: 24, fontWeight: "600" }}>Some map content</Text>
-      <View
-        style={{
-          position: "absolute",
-          width: "100%",
-          height: 400,
-          bottom: -24,
-          display: "flex",
-          gap: 8,
-        }}
+      <Animated.View
+        style={[
+          {
+            position: "absolute",
+            width: "100%",
+            bottom: -24,
+            display: "flex",
+            height: 380,
+            gap: 8,
+          },
+          cardStyle,
+        ]}
       >
         <Buttons />
-        <View
-          style={{
-            display: "flex",
-            backgroundColor: "white",
-            borderRadius: 16,
-            paddingHorizontal: 12,
-            paddingVertical: 32,
-            gap: 16,
-          }}
+        <Animated.View
+          style={[
+            {
+              display: "flex",
+              borderRadius: 16,
+              paddingHorizontal: 12,
+              paddingVertical: 32,
+              gap: 16,
+            },
+            behindStyles,
+          ]}
         >
           <View
             style={{
@@ -43,7 +107,7 @@ export default function CollapsableWheelComponent() {
             }}
           >
             <Text style={{ fontSize: 20, fontWeight: "500" }}>Hourly</Text>
-            <Text style={{ fontSize: 20, opacity: 0.5 }}>0.50€/30 min</Text>
+            <Text style={{ fontSize: 20, color: "#A0A0A0" }}>0.50€/30 min</Text>
           </View>
           <View
             style={{
@@ -53,40 +117,84 @@ export default function CollapsableWheelComponent() {
               height: 80,
             }}
           />
-        </View>
-        <View
-          style={{
-            display: "flex",
-            backgroundColor: "white",
-            borderTopLeftRadius: 16,
-            borderTopRightRadius: 16,
-            paddingHorizontal: 12,
-            paddingVertical: 32,
-            gap: 16,
-            alignItems: "center",
-            justifyContent: "space-between",
-            flexDirection: "row",
-          }}
-        >
-          <View style={{ display: "flex", gap: 4 }}>
-            <Text style={{ fontSize: 20, fontWeight: "500" }}>Day pass</Text>
-            <Text style={{ fontSize: 20, opacity: 0.5 }}>20% discount</Text>
-          </View>
-          <Pressable
-            style={{
-              backgroundColor: "black",
+        </Animated.View>
+        <Animated.View
+          style={[
+            {
               display: "flex",
+              backgroundColor: "white",
+              borderTopLeftRadius: 16,
+              borderTopRightRadius: 16,
+              paddingHorizontal: 12,
+              paddingVertical: 32,
+              gap: 16,
+              height: "100%",
+            },
+            cardStyle,
+          ]}
+        >
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              width: "100%",
               alignItems: "center",
-              justifyContent: "center",
-              borderRadius: 255,
-              paddingHorizontal: 20,
-              paddingVertical: 16,
+              justifyContent: "space-between",
+              alignSelf: "flex-start",
             }}
           >
-            <Text style={{ color: "white", fontSize: 16 }}>Pay 20€</Text>
-          </Pressable>
-        </View>
-      </View>
+            <GestureDetector gesture={pan}>
+              <View
+                style={{
+                  display: "flex",
+                  gap: 4,
+                  flexGrow: 1,
+                  position: "relative",
+                }}
+              >
+                <Text style={{ fontSize: 20, fontWeight: "500" }}>
+                  Day pass
+                </Text>
+                <Animated.Text
+                  style={[{ fontSize: 20, color: "#A0A0A0" }, opacity]}
+                >
+                  20% discount
+                </Animated.Text>
+                <Animated.Text
+                  style={[
+                    {
+                      fontSize: 20,
+                      color: "#A0A0A0",
+                      position: "absolute",
+                      top: 28,
+                    },
+                    inverseOpacity,
+                  ]}
+                >
+                  0.35€/30 min
+                </Animated.Text>
+              </View>
+            </GestureDetector>
+            <AnimatedPressable
+              style={[
+                {
+                  backgroundColor: "black",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRadius: 255,
+                  paddingHorizontal: 20,
+                  paddingVertical: 16,
+                },
+                opacity,
+              ]}
+              disabled={opacity.opacity === 0}
+            >
+              <Text style={{ color: "white", fontSize: 16 }}>Pay 20€</Text>
+            </AnimatedPressable>
+          </View>
+        </Animated.View>
+      </Animated.View>
     </View>
   );
 }
