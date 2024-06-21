@@ -1,15 +1,15 @@
-import { MousePointer2 } from "lucide-react-native";
+import { BlurView } from "expo-blur";
+import { LinearGradient } from "expo-linear-gradient";
+import { CreditCard, MousePointer2 } from "lucide-react-native";
 import { useMemo } from "react";
 import { Pressable, Text, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
-  Easing,
   interpolate,
   interpolateColor,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
-  withTiming,
 } from "react-native-reanimated";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
@@ -86,38 +86,7 @@ export default function CollapsableWheelComponent() {
         ]}
       >
         <Buttons />
-        <Animated.View
-          style={[
-            {
-              display: "flex",
-              borderRadius: 16,
-              paddingHorizontal: 12,
-              paddingVertical: 32,
-              gap: 16,
-            },
-            behindStyles,
-          ]}
-        >
-          <View
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              flexDirection: "row",
-            }}
-          >
-            <Text style={{ fontSize: 20, fontWeight: "500" }}>Hourly</Text>
-            <Text style={{ fontSize: 20, color: "#A0A0A0" }}>0.50€/30 min</Text>
-          </View>
-          <View
-            style={{
-              borderRadius: 16,
-              backgroundColor: "#E9E9E9",
-              width: "100%",
-              height: 80,
-            }}
-          />
-        </Animated.View>
+        <HourlyCard behindStyles={behindStyles} />
         <Animated.View
           style={[
             {
@@ -127,7 +96,7 @@ export default function CollapsableWheelComponent() {
               borderTopRightRadius: 16,
               paddingHorizontal: 12,
               paddingVertical: 32,
-              gap: 16,
+              gap: 32,
               height: "100%",
             },
             cardStyle,
@@ -138,7 +107,7 @@ export default function CollapsableWheelComponent() {
               display: "flex",
               flexDirection: "row",
               width: "100%",
-              alignItems: "center",
+              alignItems: "flex-start",
               justifyContent: "space-between",
               alignSelf: "flex-start",
             }}
@@ -147,32 +116,45 @@ export default function CollapsableWheelComponent() {
               <View
                 style={{
                   display: "flex",
-                  gap: 4,
+                  gap: 72,
                   flexGrow: 1,
-                  position: "relative",
                 }}
               >
-                <Text style={{ fontSize: 20, fontWeight: "500" }}>
-                  Day pass
-                </Text>
-                <Animated.Text
-                  style={[{ fontSize: 20, color: "#A0A0A0" }, opacity]}
-                >
-                  20% discount
-                </Animated.Text>
-                <Animated.Text
-                  style={[
-                    {
+                <View style={{ display: "flex", gap: 4, position: "relative" }}>
+                  <Text
+                    style={{
                       fontSize: 20,
-                      color: "#A0A0A0",
-                      position: "absolute",
-                      top: 28,
-                    },
-                    inverseOpacity,
-                  ]}
-                >
-                  0.35€/30 min
-                </Animated.Text>
+                      fontWeight: "500",
+                    }}
+                  >
+                    Day pass
+                  </Text>
+                  <Animated.Text
+                    style={[
+                      {
+                        fontSize: 20,
+                        color: "#A0A0A0",
+                      },
+                      opacity,
+                    ]}
+                  >
+                    20% discount
+                  </Animated.Text>
+                  <Animated.Text
+                    style={[
+                      {
+                        fontSize: 20,
+                        color: "#A0A0A0",
+                        position: "absolute",
+                        top: 28,
+                      },
+                      inverseOpacity,
+                    ]}
+                  >
+                    0.35€/30 min
+                  </Animated.Text>
+                </View>
+                <Text style={{ fontWeight: "600", fontSize: 64 }}>20€</Text>
               </View>
             </GestureDetector>
             <AnimatedPressable
@@ -192,6 +174,107 @@ export default function CollapsableWheelComponent() {
             >
               <Text style={{ color: "white", fontSize: 16 }}>Pay 20€</Text>
             </AnimatedPressable>
+            <Animated.View
+              style={[
+                {
+                  display: "flex",
+                  position: "absolute",
+                  width: 200,
+                  height: 200,
+                  borderRadius: 255,
+                  backgroundColor: "#E9E9E9",
+                  right: 0,
+                  top: 0,
+                  overflow: "hidden",
+                },
+                inverseOpacity,
+              ]}
+            >
+              <View
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  position: "relative",
+                }}
+              >
+                <BlurView
+                  intensity={100}
+                  style={{
+                    position: "absolute",
+                    zIndex: 10,
+                    top: 0,
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                  }}
+                />
+                <LinearGradient
+                  colors={["#E3E374", "#B674E3", "#74B6E3"]}
+                  start={{ x: 0.1, y: 0.5 }}
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    transform: [
+                      {
+                        rotate: "-90deg",
+                      },
+                    ],
+                  }}
+                />
+                <View
+                  style={{
+                    display: "flex",
+                    width: 120,
+                    height: 120,
+                    borderRadius: 255,
+                    backgroundColor: "#E9E9E9",
+                    position: "relative",
+                    zIndex: 40,
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Text style={{ fontSize: 24 }}>1</Text>
+                  <Text style={{ fontSize: 24 }}>Day</Text>
+                </View>
+              </View>
+            </Animated.View>
+          </View>
+          <View
+            style={{
+              borderRadius: 16,
+              backgroundColor: "black",
+              width: "100%",
+              height: 80,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              paddingHorizontal: 24,
+              flexDirection: "row",
+            }}
+          >
+            <View
+              style={{
+                backgroundColor: "#464646",
+                borderRadius: 8,
+                display: "flex",
+                alignItems: "center",
+                gap: 4,
+                paddingVertical: 4,
+                paddingHorizontal: 10,
+                flexDirection: "row",
+              }}
+            >
+              <CreditCard size={24} color={"#FFFFFF"} />
+              <Text style={{ color: "#FFFFFF" }}>**** 1234</Text>
+            </View>
+            <Text style={{ color: "#FFFFFF", fontSize: 20 }}>Pay 20€</Text>
           </View>
         </Animated.View>
       </Animated.View>
@@ -257,5 +340,60 @@ function Buttons() {
         <MousePointer2 size={16} color={"black"} />
       </Pressable>
     </View>
+  );
+}
+
+function HourlyCard({
+  behindStyles,
+}: {
+  behindStyles: { backgroundColor: string };
+}) {
+  return (
+    <Animated.View
+      style={[
+        {
+          display: "flex",
+          borderRadius: 16,
+          paddingHorizontal: 12,
+          paddingVertical: 32,
+          gap: 16,
+        },
+        behindStyles,
+      ]}
+    >
+      <View
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          flexDirection: "row",
+        }}
+      >
+        <Text
+          style={{
+            fontSize: 20,
+            fontWeight: "500",
+          }}
+        >
+          Hourly
+        </Text>
+        <Text
+          style={{
+            fontSize: 20,
+            color: "#A0A0A0",
+          }}
+        >
+          0.50€/30 min
+        </Text>
+      </View>
+      <View
+        style={{
+          borderRadius: 16,
+          backgroundColor: "#E9E9E9",
+          width: "100%",
+          height: 80,
+        }}
+      />
+    </Animated.View>
   );
 }
