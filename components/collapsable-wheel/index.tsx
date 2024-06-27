@@ -1,8 +1,9 @@
+import { Canvas, Circle, Path, Rect, Skia } from "@shopify/react-native-skia";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { CreditCard, MousePointer2 } from "lucide-react-native";
 import { useMemo } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Dimensions, Pressable, Text, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   interpolate,
@@ -11,6 +12,7 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
+import { polar2Canvas } from "react-native-redash";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -61,6 +63,74 @@ export default function CollapsableWheelComponent() {
     opacity: interpolate(offset.value, [0, -120], [0, 1]),
   }));
 
+  const width = 200;
+  const strokeWidth = 20;
+  const center = width / 2;
+  const r = (width - strokeWidth) / 2 - 40;
+  const startAngle = Math.PI;
+  const endAngle = 2 * Math.PI;
+  const x1 = center - r * Math.cos(startAngle);
+  const y1 = -r * Math.sin(startAngle) + center;
+  const x2 = 180;
+  const y2 = 100;
+  const skiaBackgroundPath = Skia.Path.MakeFromSVGString(
+    "M190 100C190 149.706 149.706 190 100 190C50.2944 190 10 149.706 10 100C10 50.2944 50.2944 10 100 10C149.706 10 190 50.2944 190 100Z"
+  );
+  const skiaForegroundPath = Skia.Path.MakeFromSVGString(
+    "M190 100C190 149.706 149.706 190 100 190C50.2944 190 10 149.706 10 100C10 50.2944 50.2944 10 100 10C149.706 10 190 50.2944 190 100Z"
+  );
+
+  const movableCx = useSharedValue(x2);
+  const movableCy = useSharedValue(y2);
+  const previousPositionX = useSharedValue(x2);
+  const previousPositionY = useSharedValue(y2);
+  const percentComplete = useSharedValue(0);
+
+  const slidingGesture = Gesture.Pan()
+    .onUpdate(({ translationX, translationY, absoluteX }) => {
+      const oldCanvasX = translationX + previousPositionX.value;
+      const oldCanvasY = translationY + previousPositionY.value;
+
+      const xPrime = oldCanvasX - center;
+      const yPrime = -(oldCanvasY - center);
+      const rawTheta = Math.atan2(yPrime, xPrime);
+
+      let newTheta;
+
+      if (absoluteX < width / 2 && rawTheta < 0) {
+        newTheta = Math.PI;
+      } else if (absoluteX > width / 2 && rawTheta <= 0) {
+        newTheta = 0;
+      } else {
+        newTheta = rawTheta;
+      }
+
+      const percent = 1 - newTheta / Math.PI;
+      percentComplete.value = percent;
+
+      const newCoords = polar2Canvas(
+        {
+          theta: newTheta,
+          radius: r,
+        },
+        {
+          x: center,
+          y: center,
+        }
+      );
+
+      movableCx.value = newCoords.x;
+      movableCy.value = newCoords.y;
+    })
+    .onEnd(() => {
+      previousPositionX.value = movableCx.value;
+      previousPositionY.value = movableCy.value;
+    });
+
+  if (!skiaBackgroundPath || !skiaForegroundPath) {
+    return <View />;
+  }
+
   return (
     <View
       style={{
@@ -110,6 +180,7 @@ export default function CollapsableWheelComponent() {
               alignItems: "flex-start",
               justifyContent: "space-between",
               alignSelf: "flex-start",
+              position: "relative",
             }}
           >
             <GestureDetector gesture={pan}>
@@ -167,6 +238,8 @@ export default function CollapsableWheelComponent() {
                   borderRadius: 255,
                   paddingHorizontal: 20,
                   paddingVertical: 16,
+                  position: "absolute",
+                  right: 0,
                 },
                 opacity,
               ]}
@@ -174,7 +247,52 @@ export default function CollapsableWheelComponent() {
             >
               <Text style={{ color: "white", fontSize: 16 }}>Pay 20€</Text>
             </AnimatedPressable>
-            <Animated.View
+            <GestureDetector gesture={slidingGesture}>
+              <Animated.View style={[{ flex: 1, zIndex: 50 }, inverseOpacity]}>
+                <Canvas
+                  style={{
+                    flex: 1,
+                    // backgroundColor: "red",
+                    width: 200,
+                    height: 200,
+                    position: "absolute",
+                    right: 8,
+                  }}
+                >
+                  <Path
+                    path={skiaBackgroundPath}
+                    style="stroke"
+                    strokeWidth={strokeWidth}
+                    strokeCap="round"
+                    color={"black"}
+                  />
+                  <Path
+                    path={skiaForegroundPath}
+                    style="stroke"
+                    strokeWidth={strokeWidth}
+                    strokeCap="round"
+                    color={"grey"}
+                    start={0}
+                    end={percentComplete}
+                  />
+                  <Circle
+                    cx={movableCx}
+                    cy={movableCy}
+                    r={20}
+                    color="orange"
+                    style="fill"
+                  />
+                  <Circle
+                    cx={movableCx}
+                    cy={movableCy}
+                    r={15}
+                    color="white"
+                    style="fill"
+                  />
+                </Canvas>
+              </Animated.View>
+            </GestureDetector>
+            {/* <Animated.View
               style={[
                 {
                   display: "flex",
@@ -244,7 +362,7 @@ export default function CollapsableWheelComponent() {
                   <Text style={{ fontSize: 24 }}>Day</Text>
                 </View>
               </View>
-            </Animated.View>
+            </Animated.View> */}
           </View>
           <View
             style={{
