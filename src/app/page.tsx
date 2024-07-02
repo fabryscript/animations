@@ -7,6 +7,12 @@ const animations: HomeCardProps[] = [
     href: "/dsb",
     imageUrl: "/dsb/cover.png",
   },
+  {
+    title: "3D Blocks",
+    description: "Draggable, physics-powered 3d blocks",
+    href: "/3d-blocks",
+    imageUrl: "/3d-blocks/cover.png",
+  },
 ];
 
 export default function Home() {
