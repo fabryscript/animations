@@ -1,12 +1,95 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Dimensions, Pressable, Text, View } from "react-native";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
+import Animated, {
+	FadeIn,
+	FadeOut,
+	useAnimatedStyle,
+	useSharedValue,
+	withSpring,
+	withTiming,
+} from "react-native-reanimated";
 
 const { width } = Dimensions.get("screen");
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 export default function AnimatedButtonFormComponent() {
 	const [isOneChecked, setIsOneChecked] = useState(false);
 	const [isTwoChecked, setIsTwoChecked] = useState(false);
+
+	const hasBeenPressed = useSharedValue(false);
+
+	const isValid = useMemo(
+		() => isOneChecked && isTwoChecked,
+		[isOneChecked, isTwoChecked],
+	);
+
+	const buttonStyles = useAnimatedStyle(() => ({
+		backgroundColor: hasBeenPressed.value
+			? isValid
+				? withTiming("black", { duration: 150 })
+				: withTiming("red", { duration: 150 })
+			: isValid
+				? withTiming("black", { duration: 150 })
+				: withTiming("red", { duration: 150 }),
+		transform: [
+			{
+				translateX: withSpring(0, { stiffness: 200 }),
+			},
+		],
+	}));
+
+	const buttonContent = () => {
+		return hasBeenPressed.value ? (
+			isValid ? (
+				<Animated.Text
+					entering={FadeIn}
+					exiting={FadeOut}
+					style={[
+						{
+							color: "white",
+							fontSize: 24,
+							fontWeight: "700",
+							position: "absolute",
+						},
+					]}
+				>
+					Creating
+				</Animated.Text>
+			) : (
+				<Animated.Text
+					entering={FadeIn}
+					exiting={FadeOut}
+					style={[
+						{
+							color: "white",
+							fontSize: 24,
+							fontWeight: "700",
+							position: "absolute",
+						},
+					]}
+				>
+					Please agree
+				</Animated.Text>
+			)
+		) : (
+			<Animated.Text
+				entering={FadeIn}
+				exiting={FadeOut}
+				style={[
+					{
+						color: "white",
+						fontSize: 24,
+						fontWeight: "700",
+						position: "absolute",
+					},
+				]}
+			>
+				Create Account
+			</Animated.Text>
+		);
+	};
 
 	return (
 		<View style={{ flex: 1, position: "relative" }}>
@@ -77,7 +160,10 @@ export default function AnimatedButtonFormComponent() {
 						>
 							<BouncyCheckbox
 								isChecked={isOneChecked}
-								onPress={(checked) => setIsOneChecked(checked)}
+								onPress={(checked) => {
+									hasBeenPressed.value = false;
+									setIsOneChecked(checked);
+								}}
 								fillColor="green"
 								size={28}
 								innerIconStyle={{
@@ -90,7 +176,10 @@ export default function AnimatedButtonFormComponent() {
 								style={{ width: 28, height: 28 }}
 							/>
 							<Text
-								onPress={() => setIsOneChecked((p) => !p)}
+								onPress={() => {
+									hasBeenPressed.value = false;
+									setIsOneChecked((p) => !p);
+								}}
 								suppressHighlighting
 								style={{ width: 245, fontSize: 18, opacity: 0.5 }}
 							>
@@ -109,7 +198,10 @@ export default function AnimatedButtonFormComponent() {
 						>
 							<BouncyCheckbox
 								isChecked={isTwoChecked}
-								onPress={(checked) => setIsTwoChecked(checked)}
+								onPress={(checked) => {
+									hasBeenPressed.value = false;
+									setIsTwoChecked(checked);
+								}}
 								fillColor="green"
 								size={28}
 								innerIconStyle={{
@@ -122,7 +214,10 @@ export default function AnimatedButtonFormComponent() {
 								style={{ width: 28, height: 28 }}
 							/>
 							<Text
-								onPress={() => setIsTwoChecked((p) => !p)}
+								onPress={() => {
+									hasBeenPressed.value = false;
+									setIsTwoChecked((p) => !p);
+								}}
 								suppressHighlighting
 								style={{ width: 245, fontSize: 18, opacity: 0.5 }}
 							>
@@ -132,21 +227,25 @@ export default function AnimatedButtonFormComponent() {
 						</View>
 					</View>
 				</View>
-				<Pressable
-					style={{
-						borderRadius: 255,
-						width: "100%",
-						height: 64,
-						backgroundColor: "black",
-						display: "flex",
-						alignItems: "center",
-						justifyContent: "center",
+				<AnimatedPressable
+					style={[
+						{
+							borderRadius: 255,
+							width: "100%",
+							height: 64,
+							display: "flex",
+							alignItems: "center",
+							justifyContent: "center",
+							position: "relative",
+						},
+						buttonStyles,
+					]}
+					onPress={() => {
+						hasBeenPressed.value = true;
 					}}
 				>
-					<Text style={{ color: "white", fontSize: 24, fontWeight: "700" }}>
-						Create Account
-					</Text>
-				</Pressable>
+					{buttonContent}
+				</AnimatedPressable>
 			</View>
 		</View>
 	);
